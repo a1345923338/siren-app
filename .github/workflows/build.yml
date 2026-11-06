@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Unzip project
-        run: unzip ios-project.zip -d project
+        run: unzip ios-project-en.zip -d project
 
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
@@ -25,10 +25,10 @@ jobs:
       - name: Build and archive
         run: |
           cd project
-          xcodebuild -workspace "警报器.xcworkspace" \
-            -scheme "警报器" \
+          xcodebuild -workspace "Siren.xcworkspace" \
+            -scheme "Siren" \
             -configuration Release \
-            -archivePath build/警报器.xcarchive \
+            -archivePath build/Siren.xcarchive \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
@@ -38,12 +38,12 @@ jobs:
         run: |
           cd project
           mkdir -p build/Payload
-          cp -r build/警报器.xcarchive/Products/Applications/警报器.app build/Payload/
+          cp -r build/Siren.xcarchive/Products/Applications/Siren.app build/Payload/
           cd build
-          zip -r 警报器.ipa Payload
+          zip -r Siren.ipa Payload
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: siren-ipa
-          path: project/build/警报器.ipa
+          path: project/build/Siren.ipa
