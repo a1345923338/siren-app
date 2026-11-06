@@ -14,6 +14,10 @@ jobs:
       - name: Unzip project
         run: unzip ios-project-en.zip -d project
 
+      - name: Remove BOM from files
+        run: |
+          find project -type f \( -name "*.pbxproj" -o -name "Podfile" -o -name "*.xcscheme" -o -name "*.plist" \) -exec sed -i '1s/^\xEF\xBB\xBF//' {} \;
+
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
 
@@ -37,13 +41,13 @@ jobs:
       - name: Export IPA
         run: |
           cd project
-          mkdir -p build/Payload
-          cp -r build/Siren.xcarchive/Products/Applications/Siren.app build/Payload/
-          cd build
-          zip -r Siren.ipa Payload
+          xcodebuild -exportArchive \
+            -archivePath build/Siren.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath build/ipa
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: siren-ipa
-          path: project/build/Siren.ipa
+          name: Siren-IPA
+          path: project/build/ipa/*.ipa
